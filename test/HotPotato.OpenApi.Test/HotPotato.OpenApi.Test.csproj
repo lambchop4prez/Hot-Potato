@@ -8,7 +8,7 @@
     <RootNamespace>HotPotato</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
-    <Configurations>Debug;Release;</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
 

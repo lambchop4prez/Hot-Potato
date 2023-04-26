@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <IsPackable>false</IsPackable>
-    <Configurations>Debug;Release;</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
 	<!--Publish Properties-->
@@ -12,6 +12,7 @@
 		<IsPublishable>false</IsPublishable>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'HotPotato.Api' " />
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="[3.1.3,5.0.11]" />
   </ItemGroup>
