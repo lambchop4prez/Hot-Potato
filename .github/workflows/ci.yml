@@ -47,7 +47,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet build --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
+        dotnet build  --framework=net6.0 --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
 
     - name: Run Unit Tests
       run: |
@@ -79,8 +79,8 @@ jobs:
       env:
         SpecToken: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        dotnet $GITHUB_WORKSPACE/src/HotPotato.AspNetCore.Host/bin/Release/net5.0/HotPotato.AspNetCore.Host.dll &
-        dotnet $GITHUB_WORKSPACE/test/HotPotato.Api/bin/Release/net5.0/HotPotato.Test.Api.dll &
+        dotnet $GITHUB_WORKSPACE/src/HotPotato.AspNetCore.Host/bin/Release/net6.0/HotPotato.AspNetCore.Host.dll &
+        dotnet $GITHUB_WORKSPACE/test/HotPotato.Api/bin/Release/net6.0/HotPotato.Test.Api.dll &
 
     - name: Run Postman Tests
       uses: anthonyvscode/newman-action@v1
