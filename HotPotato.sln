@@ -135,7 +135,6 @@ Global
 		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Docker|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
