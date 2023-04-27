@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
 
     <PackageVersion></PackageVersion>
     <Title>HotPotato.Core</Title>
@@ -10,7 +10,7 @@
     <Company />
     <Description>HotPotato.Core contains all of the models, HTTP logic, the proxy forwarder, and the interface for the proxy processor. This library is a dependency of HotPotato.AspNetCore.Middleware but will likely never need to be directly consumed.</Description>
     <RepositoryUrl>https://github.com/HylandSoftware/Hot-Potato</RepositoryUrl>
-    <Configurations>Debug;Release;Docker</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

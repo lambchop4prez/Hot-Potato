@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
 
-    <Configurations>Debug;Release;Docker</Configurations>
+    <Configurations>Debug;Release</Configurations>
 
     <UserSecretsId>3791b776-fe7b-45bd-8e72-93c7a8046c72</UserSecretsId>
   </PropertyGroup>
