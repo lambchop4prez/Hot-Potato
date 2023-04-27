@@ -42,7 +42,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet build  --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
+        dotnet build --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
 
     - name: Run Unit Tests
       run: |
