@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <ApplicationIcon />
@@ -14,7 +14,7 @@
     <Company />
     <Description>HotPotato.OpenApi contains all of the OpenAPI functionality including the processor implementation that validates an HTTP request/response pair against a spec, a result collection, logic to find paths, and so on. Currently, we are using the packages NSwag, NJsonSchema, and NJsonSchema.Yaml to consume a spec and to validate the contained schemas.</Description>
     <RepositoryUrl>https://github.com/davidmbillie/Hot-Potato</RepositoryUrl>
-    <Configurations>Debug;Release;Docker</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

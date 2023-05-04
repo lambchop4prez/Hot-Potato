@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <!-- <RestoreSources>
-      
+
     </RestoreSources> -->
     <ApplicationIcon />
     <StartupObject />
@@ -15,7 +15,7 @@
     <Company />
     <Description>This is an ASP.NETCore middleware that can be used in situations where test suites are directly starting up the server startup or using the TestServer.</Description>
     <RepositoryUrl>https://github.com/davidmbillie/Hot-Potato</RepositoryUrl>
-    <Configurations>Debug;Release;Docker</Configurations>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,12 +23,8 @@
     <WarningsAsErrors />
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="Microsoft.Extensions.Http" Version="[2.2.0,5.0.0]" />
-  </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="[3.1.12,5.1.0)" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Microsoft.NETCore.DotNetHostPolicy" Version="5.0.4" />
   </ItemGroup>
 

@@ -37,15 +37,10 @@ jobs:
         echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
 
 
-    - name: Setup .NET 5.0
+    - name: Setup .NET 6.0
       uses: actions/setup-dotnet@v3.0.3
       with:
-        dotnet-version: 5.0.x
-
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v3.0.3
-      with:
-        dotnet-version: 3.1.x
+        dotnet-version: 6.0.x
 
     - name: Build
       run: |
@@ -81,8 +76,8 @@ jobs:
       env:
         SpecToken: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        dotnet $GITHUB_WORKSPACE/src/HotPotato.AspNetCore.Host/bin/Release/net5.0/HotPotato.AspNetCore.Host.dll &
-        dotnet $GITHUB_WORKSPACE/test/HotPotato.Api/bin/Release/net5.0/HotPotato.Test.Api.dll &
+        dotnet $GITHUB_WORKSPACE/src/HotPotato.AspNetCore.Host/bin/Release/net6.0/HotPotato.AspNetCore.Host.dll &
+        dotnet $GITHUB_WORKSPACE/test/HotPotato.Api/bin/Release/net6.0/HotPotato.Test.Api.dll &
 
     - name: Run Postman Tests
       uses: anthonyvscode/newman-action@v1.1
@@ -118,7 +113,7 @@ jobs:
         path: ./test/coverage/*.xml
 
     - name: Archive test results
-      uses: actions/upload-artifact@v3.12
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: test-results
         path: ./test/results/*.xml
