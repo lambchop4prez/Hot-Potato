@@ -25,7 +25,7 @@ namespace HotPotato.OpenApi.Validators
 
 	public class SpecBodyValTest
 	{
-		[Theory]
+		[SkippableTheory]
 		[ClassData(typeof(SpecBodyValidTestData))]
 		public async Task BodyValidator_CreatesValidResult(string specSubPath, HttpMethod reqMethod, HttpStatusCode statusCode, string endpointURI, string contentType, object bodyJson)
 		{
@@ -63,7 +63,7 @@ namespace HotPotato.OpenApi.Validators
 			}
 		}
 
-		[Theory]
+		[SkippableTheory]
 		[ClassData(typeof(SpecBodyInvalidTestData))]
 		public async Task BodyValidator_CreatesInvalidResult(string specSubPath, HttpMethod reqMethod, HttpStatusCode statusCode,
 			string endpointURI, string contentType, object bodyJson, ValidationErrorKind expectedKind1, ValidationErrorKind expectedKind2)
@@ -106,7 +106,7 @@ namespace HotPotato.OpenApi.Validators
 
 		}
 
-		[Theory]
+		[SkippableTheory]
 		[ClassData(typeof(CustomSpecTestData))]
 		public async Task BodyValidator_CreatesValidResultWithDiffTypes(string specSubPath, HttpMethod reqMethod, HttpStatusCode statusCode, string endpointURI, string contentType, string bodyString)
 		{
@@ -139,7 +139,7 @@ namespace HotPotato.OpenApi.Validators
 			}
 		}
 
-		[Theory]
+		[SkippableTheory]
 		[ClassData(typeof(CustomSpecNegTestData))]
 		public async Task BodyValidator_CreatesInvalidResultWithDiffTypes(string specSubPath, HttpMethod reqMethod,
 			HttpStatusCode statusCode, string endpointURI, string contentType, string bodyString, ValidationErrorKind errorKind)

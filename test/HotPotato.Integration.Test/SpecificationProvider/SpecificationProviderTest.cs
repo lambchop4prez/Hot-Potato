@@ -9,7 +9,7 @@ namespace HotPotato.OpenApi.SpecificationProvider
 {
 	public class SpecificationProviderTest
 	{
-		[Fact]
+		[SkippableFact]
 		public void ISpecificationProvider_GetSpecDocument_ReturnsDocumentFromPath()
 		{
 			string specPath = SpecPath("specs/keyword/", "specification.yaml");

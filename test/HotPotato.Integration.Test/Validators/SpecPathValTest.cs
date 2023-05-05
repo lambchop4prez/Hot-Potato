@@ -10,7 +10,7 @@ namespace HotPotato.OpenApi.Validators
 {
 	public class SpecPathValTest
 	{
-		[Fact]
+		[SkippableFact]
 		public void PathValidator_GeneratesSpecPathWithParam()
 		{
 			string specPath = SpecPath("specs/keyword/", "specification.yaml");
@@ -27,7 +27,7 @@ namespace HotPotato.OpenApi.Validators
 			Assert.Equal("get", subject.Result.Keys.ElementAt(0).ToLower());
 		}
 
-		[Fact]
+		[SkippableFact]
 		public void PathValidator_GeneratesSpecPathWithoutParam()
 		{
 			string specPath = SpecPath("specs/onbase-workflow/", "specification.yaml");

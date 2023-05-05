@@ -37,7 +37,7 @@ namespace HotPotato.E2E.Test
 			host = fixture.Host;
 		}
 
-		[Fact]
+		[SkippableFact]
 		public async Task HotPotato_CookiesEndpoint_Should_Delete_Cookies()
 		{
 			var servicePro = host.Services;
