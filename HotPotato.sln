@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotPotato.NUnitHelpers", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotPotato.Benchmark.Test", "test\HotPotato.Benchmark.Test\HotPotato.Benchmark.Test.csproj", "{3AEFBAB9-D575-4876-8FA7-F89D4A14B4BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotPotato.NetFramework.Test", "test\HotPotato.NetFramework.Test\HotPotato.NetFramework.Test.csproj", "{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotPotato.NetFramework.Test", "test\HotPotato.NetFramework.Test\HotPotato.NetFramework.Test.csproj", "{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,6 +112,7 @@ Global
 		{3AEFBAB9-D575-4876-8FA7-F89D4A14B4BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AEFBAB9-D575-4876-8FA7-F89D4A14B4BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C9EFC5A-86CF-40C6-A33E-F7EA578A1992}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
