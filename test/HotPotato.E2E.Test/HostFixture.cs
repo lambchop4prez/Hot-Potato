@@ -15,7 +15,6 @@ namespace HotPotato.E2E.Test
 	public class HostFixture : IDisposable
 	{
 		public IWebHost Host { get; }
-		public bool SpecTokenExists { get; }
 
 		public HostFixture()
 		{
@@ -46,10 +45,6 @@ namespace HotPotato.E2E.Test
 			.Build();
 
 			IConfiguration configuration = Host.Services.GetService<IConfiguration>();
-			if (!string.IsNullOrWhiteSpace(configuration["SpecToken"]))
-			{
-				SpecTokenExists = true;
-			}
 
 			Host.Start();
 		}
