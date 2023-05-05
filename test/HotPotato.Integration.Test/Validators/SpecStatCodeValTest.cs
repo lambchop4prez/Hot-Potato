@@ -22,7 +22,7 @@ namespace HotPotato.OpenApi.Validators
 {
 	public class SpecStatCodeValTest
 	{
-		[SkippableTheory]
+		[Theory]
 		[ClassData(typeof(StatusCodeNoContentTestData))]
 		public async Task StatCodeVal_CreatesValidResultWithNullContent(string specSubPath, HttpMethod reqMethod, HttpStatusCode statusCode, string endpointURI)
 		{
@@ -55,7 +55,7 @@ namespace HotPotato.OpenApi.Validators
 			}
 		}
 
-		[SkippableTheory]
+		[Theory]
 		[ClassData(typeof(StatusCodeNoContentTestData))]
 		public async Task StatCodeVal_CreatesValidResultWithEmptyContent(string specSubPath, HttpMethod reqMethod, HttpStatusCode statusCode, string endpointURI)
 		{
@@ -88,7 +88,7 @@ namespace HotPotato.OpenApi.Validators
 			}
 		}
 
-		[SkippableTheory]
+		[Theory]
 		[ClassData(typeof(StatusCodeNoContentTestData))]
 		public async Task StatCodeVal_CreatesInvalidResultWithUnexpContent(string specSubPath, HttpMethod reqMethod, HttpStatusCode statusCode, string endpointURI)
 		{

@@ -34,7 +34,7 @@ namespace HotPotato.E2E.Test
 			host = fixture.Host;
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_Should_Return_OK_And_A_String()
 		{
 			var servicePro = host.Services;
@@ -73,7 +73,7 @@ namespace HotPotato.E2E.Test
 			}
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_Should_Return_OK_And_A_JSON_Object()
 		{
 			var servicePro = host.Services;
@@ -120,7 +120,7 @@ namespace HotPotato.E2E.Test
 			}
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_Should_Return_404_Error()
 		{
 			var servicePro = host.Services;
@@ -155,7 +155,7 @@ namespace HotPotato.E2E.Test
 			}
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_Should_Return_500_Error()
 		{
 			var servicePro = host.Services;

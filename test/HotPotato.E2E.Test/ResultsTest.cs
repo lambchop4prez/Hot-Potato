@@ -44,7 +44,7 @@ namespace HotPotato.E2E.Test
 		}
 
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_Should_Set_Respective_Custom_Headers()
 		{
 			var servicePro = host.Services;
@@ -94,7 +94,7 @@ namespace HotPotato.E2E.Test
 			}
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_ResultState_ShouldSerializeCorrectly()
 		{
 			var servicePro = host.Services;

@@ -44,7 +44,7 @@ namespace HotPotato.E2E.Test
 			host = fixture.Host;
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_ShouldAutomaticallyDecompressGZip()
 		{
 			var servicePro = host.Services;
@@ -78,7 +78,7 @@ namespace HotPotato.E2E.Test
 			}
 		}
 
-		[SkippableFact]
+		[Fact]
 		public async Task HotPotato_ShouldAutomaticallyDecompressDeflate()
 		{
 			var servicePro = host.Services;

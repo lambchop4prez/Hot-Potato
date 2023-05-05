@@ -38,7 +38,7 @@ namespace HotPotato.TestServ.Test
 			results = fixture.Results;
 		}
 
-		[SkippableTheory]
+		[Theory]
 		[InlineData("http://localhost:3232", "GET", 200)]
 		[InlineData("http://localhost:3232/order", "GET", 200)]
 		[InlineData("http://localhost:3232/order", "POST", 201, true)]
@@ -69,7 +69,7 @@ namespace HotPotato.TestServ.Test
 			}
 		}
 
-		[SkippableTheory]
+		[Theory]
 		[InlineData("http://localhost:3232", "GET")]
 		[InlineData("http://localhost:3232/order", "GET")]
 		[InlineData("http://localhost:3232/expected_fail", "GET")]
