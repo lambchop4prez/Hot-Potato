@@ -16,7 +16,6 @@ namespace HotPotato.TestServ.Test
 	{
 		private HotPotatoClient client;
 		private List<Result> results;
-		private bool specTokenExists;
 
 		private readonly Order paperOrder = new Order()
 		{
@@ -37,8 +36,6 @@ namespace HotPotato.TestServ.Test
 		{
 			client = fixture.Client;
 			results = fixture.Results;
-			//Omit this line if you're using this as a template and don't need to use access tokens
-			specTokenExists = fixture.SpecTokenExists;
 		}
 
 		[SkippableTheory]
@@ -51,9 +48,6 @@ namespace HotPotato.TestServ.Test
 		[InlineData("http://localhost:3232/order/4", "GET", 200)]
 		public async Task HotPotato_Should_Process_RawPotato_HappyPaths(string path, string methodString, int expectedStatusCode, bool hasRequestBody = false)
 		{
-			//Omit this line if you're using this as a template and don't need to use access tokens
-			Skip.IfNot(specTokenExists, TestConstants.MissingSpecToken);
-
 			HttpMethod method = new HttpMethod(methodString);
 			Uri pathUri = new Uri(path);
 
@@ -83,8 +77,6 @@ namespace HotPotato.TestServ.Test
 		[InlineData("http://localhost:3232/order/4", "GET")]
 		public async Task One_Fail_Result_Should_Not_Fail_The_Whole_Set(string path, string methodString)
 		{
-			Skip.IfNot(specTokenExists, TestConstants.MissingSpecToken);
-
 			HttpMethod method = new HttpMethod(methodString);
 			Uri pathUri = new Uri(path);
 
