@@ -10,9 +10,9 @@ RUN dotnet publish -c Release --framework=net6.0 --output /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 as runtime
 
-LABEL maintainer "Test Automation Team <grp-automatedtesting@hyland.com>"
+LABEL maintainer "Test Automation Team"
 
-ENV SPEC_LOCATION "https://raw.githubusercontent.com/HylandSoftware/Hot-Potato/master/test/RawPotatoSpec.yaml"
+ENV SPEC_LOCATION "https://raw.githubusercontent.com/davidmbillie/Hot-Potato/master/test/RawPotatoSpec.yaml"
 ENV REMOTE_ENDPOINT "http://localhost:9000"
 
 COPY --from=build /app/publish /opt/hotpotato/

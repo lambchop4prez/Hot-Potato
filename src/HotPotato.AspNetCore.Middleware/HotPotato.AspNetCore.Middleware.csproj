@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <!-- <RestoreSources>
 
     </RestoreSources> -->
@@ -14,7 +14,7 @@
     <Copyright />
     <Company />
     <Description>This is an ASP.NETCore middleware that can be used in situations where test suites are directly starting up the server startup or using the TestServer.</Description>
-    <RepositoryUrl>https://github.com/HylandSoftware/Hot-Potato</RepositoryUrl>
+    <RepositoryUrl>https://github.com/davidmbillie/Hot-Potato</RepositoryUrl>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
