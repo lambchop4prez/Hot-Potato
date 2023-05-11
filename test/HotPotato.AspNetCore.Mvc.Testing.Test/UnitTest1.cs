@@ -10,7 +10,10 @@ public class Tests
     [Test]
     public void Test1()
     {
-        var subject = new HotPotatoWebApplicationBuilder<Test.Api.Startup>();
+        var builder = new HotPotatoWebApplicationBuilder<Test.Api.Startup>();
+        var client = builder.CreateClient();
+        var response = client.GetAsync("/orders");
+        
     }
 }
 

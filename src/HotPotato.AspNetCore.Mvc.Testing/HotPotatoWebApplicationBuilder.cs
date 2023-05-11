@@ -10,13 +10,6 @@ namespace HotPotato.AspNetCore.Mvc.Testing;
 public class HotPotatoWebApplicationBuilder<TProgram>
 	: WebApplicationFactory<TProgram> where TProgram : class
 {
-	public override IServiceProvider Services => base.Services;
-
-	protected override IHost CreateHost(IHostBuilder builder)
-	{
-		
-		return base.CreateHost(builder);
-	}
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
@@ -30,9 +23,5 @@ public class HotPotatoWebApplicationBuilder<TProgram>
 			app.UseMiddleware<HotPotatoMiddleware>();
 		});
 		base.ConfigureWebHost(builder);
-	}
-	protected override void ConfigureClient(HttpClient client)
-	{
-		
 	}
 }
