@@ -42,10 +42,11 @@ namespace HotPotato.AspNetCore.Host
 				builder.UseDeveloperExceptionPage();
 			}
 
-			builder.UseMiddleware<HotPotatoMiddleware>();
+			//builder.UseMiddleware<HotPotatoMiddleware>();
 			builder.UseRouting();
 			builder.UseEndpoints(endpointBuilder => {
 				endpointBuilder.MapControllers();
+				endpointBuilder.MapFallbackToController("Process", "HotPotato");
 			});
 		}
 
