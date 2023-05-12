@@ -1,8 +1,10 @@
 using HotPotato.Core.Http.Default;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -216,6 +218,23 @@ namespace HotPotato.Core.Http
 					break;
 			}
 			return encode.GetString(bodyContent);
+		}
+
+		public static IHotPotatoRequest ToHotPotatoRequest(this HttpRequest @this)
+		{
+			_ = @this ?? throw Exceptions.ArgumentNull(nameof(@this));
+			HotPotatoRequest request = (HotPotatoRequest)null;// new HotPotatoRequest(new HttpMethod(@this.Method), @this.);
+
+
+			return request;
+		}
+
+		public static IHotPotatoResponse ToHotPotatoResponse(this HttpResponse @this)
+		{
+			_ = @this ?? throw Exceptions.ArgumentNull(nameof(@this));
+			HotPotatoResponse response = (HotPotatoResponse)null;//new HotPotatoResponse((HttpStatusCode)@this.StatusCode, );
+
+			return response;
 		}
 	}
 }

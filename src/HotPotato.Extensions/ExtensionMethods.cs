@@ -11,21 +11,13 @@ using HotPotato.OpenApi.SpecificationProvider;
 using HotPotato.OpenApi.Results;
 using HotPotato.Core.Processor;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.TestHost;
+using HotPotato.OpenApi.Processor;
 
 namespace HotPotato.Extensions
 {
 	public static class ExtensionMethods
 	{
-		public static IHotPotatoRequest ToHotPotatoRequest(this HttpRequest @this)
-		{
-
-		}
-
-		public static IHotPotatoResponse ToHotPotatoResponse(this HttpResponse @this)
-		{
-
-		}
-
 		public static IServiceCollection AddHotPotatoForwardProxy(this IServiceCollection @this)
 		{
 			@this.AddScoped<IProxy, HotPotato.Core.Proxy.Default.Proxy>();
