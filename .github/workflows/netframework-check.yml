@@ -1,0 +1,25 @@
+---
+name: .NET Full Framework Check
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/**/*.csproj'
+      - 'HotPotato.sln'
+jobs:
+  net-framework:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.0.0
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.2.0
+
+      - name: Restore
+        run: nuget restore $GITHUB_WORKSPACE/HotPotato.sln
+
+      - name: Build
+        run: msbuild.exe HotPotato.sln /p:platform="Any CPU" /p:configuration="Release"

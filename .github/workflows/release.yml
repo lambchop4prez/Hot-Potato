@@ -1,0 +1,19 @@
+---
+name: Release Hot Potato
+
+on:
+  release:
+
+jobs:
+  push-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull artifacts from tag
+
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Publish
+        run: dotnet nuget push $GITHUB_WORKSPACE/nuget/**/*.nupkg -k ${{ secrets.NUGET_PUSH }} -s https://api.nuget.org/v3/index.json --skip-duplicate

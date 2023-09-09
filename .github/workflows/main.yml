@@ -1,21 +1,14 @@
 ---
-name: hot-potato-ci
-
 on:
   push:
     branches:
-      - '!main'
-  pull_request:
-    branches:
-      - main
-
+      - 'main'
 jobs:
   build:
     uses: ./.github/workflows/build.yml
 
   create-release:
     runs-on: ubuntu-latest
-    if: ${{ success() && }}
     steps:
       - name: Create Release
         run: gh release create ${{ jobs.build.steps.gitversion.outputs.nuGetVersionV2 }}

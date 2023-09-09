@@ -1,0 +1,67 @@
+---
+# Reusable workflow to build the Hot Potato nuget package and archive the artifacts.
+name: Build Hot Potato
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+
+    - name: Generate Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+        configFilePath: './GitVersion.yml'
+
+    - name: Display GitVersion outputs
+      run: |
+        echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+        echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+
+    - name: Setup .NET 6.0
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Build
+      run: |
+        dotnet build --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
+
+    - name: Test
+      env:
+        SpecToken: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet test -c Release --no-restore --no-build
+
+    - name: Package
+      if: ${{ success() }}
+      run: |
+        dotnet pack -p:PackageVersion=${{ env. GitVersion_NuGetVersionV2 }} -c Release --no-build --no-restore --output $GITHUB_WORKSPACE/nuget
+
+    - name: Archive nuget package artifacts
+      uses: actions/upload-artifact@3.1.3
+      with:
+        name: nuget-packages
+        path: $GITHUB_WORKSPACE/nuget/**/*.nupkg
+
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v3.1.3
+      with:
+        name: code-coverage-reports
+        path: ./test/coverage/*.xml
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: test-results
+        path: ./test/results/*.xml

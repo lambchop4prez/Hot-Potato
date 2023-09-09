@@ -1,0 +1,39 @@
+---
+name: Hot Potato PR
+
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
+  test-netframework:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.0.0
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.2.0
+
+      - name: Restore
+        run: nuget restore $GITHUB_WORKSPACE/HotPotato.sln
+
+      - name: Build
+        run: msbuild.exe HotPotato.sln /p:platform="Any CPU" /p:configuration="Release"
+
+  test-nugetpackage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifacts
+
+      - name:
+
+  test-cli:
+    runs-on: ubuntu-latest
+    steps:
