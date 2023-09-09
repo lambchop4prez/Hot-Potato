@@ -13,12 +13,12 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  create-release:
-    runs-on: ubuntu-latest
-    if: ${{ success() && }}
-    steps:
-      - name: Create Release
-        run: gh release create ${{ jobs.build.steps.gitversion.outputs.nuGetVersionV2 }}
+  # create-release:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ success() }}
+  #   steps:
+  #     - name: Create Release
+  #       run: gh release create ${{ job.build.steps.gitversion.outputs.nuGetVersionV2 }}
         # uses: actions/create-release@v1.1.4
         # if: ${{ success() }}
         # env:
