@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull artifacts from tag
+        uses: actions/download-artifacts
 
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v3.2.0
