@@ -83,7 +83,6 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v3.0.2
         with:
-          name: nuget-packages
           path: ./artifacts
       - name: Create Release
         run: gh release create ${{ needs.build.outputs.version }} ./artifacts/*
