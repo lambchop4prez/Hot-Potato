@@ -1,5 +1,5 @@
 ---
-name: hot-potato-ci
+name: Hot Potato CI
 
 on:
   push:
@@ -13,6 +13,20 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
+  # create-tag:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Create tag
+  #       run: git tag -a ${{build.outputs.version}}
+
+  # push-package:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download artifacts
+  #       uses: actions/download-artifacts@v3.0.2
+
+  #     - name: NuGet push
+  #       run: dotnet nuget push $GITHUB_WORKSPACE/nuget/**/*.nupkg -k ${{ secrets.NUGET_PUSH }} -s https://api.nuget.org/v3/index.json --skip-duplicate
   # create-release:
   #   runs-on: ubuntu-latest
   #   if: ${{ success() }}
