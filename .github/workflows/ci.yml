@@ -86,4 +86,4 @@ jobs:
           name: nuget-packages
           path: ./artifacts
       - name: Create Release
-        run: gh release create ${{ jobs.build.steps.gitversion.outputs.nuGetVersionV2 }} ./artifacts/*
+        run: gh release create ${{ needs.build.outputs.version }} ./artifacts/*
