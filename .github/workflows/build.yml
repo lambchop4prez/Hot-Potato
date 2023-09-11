@@ -7,7 +7,7 @@ on:
     outputs:
       version:
         description: Derived Hot Potato version
-        value: ${ jobs.build.outputs.version }
+        value: ${{ jobs.build.outputs.version }}
 
 jobs:
   build:
