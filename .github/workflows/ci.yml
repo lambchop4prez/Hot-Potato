@@ -13,20 +13,39 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  # create-tag:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Create tag
-  #       run: git tag -a ${{build.outputs.version}}
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
 
-  # push-package:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download artifacts
-  #       uses: actions/download-artifacts@v3.0.2
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      - name: Create tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${job.build.outputs.version}'
+              sha: context.sha
+            });
 
-  #     - name: NuGet push
-  #       run: dotnet nuget push $GITHUB_WORKSPACE/nuget/**/*.nupkg -k ${{ secrets.NUGET_PUSH }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+  push-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: nuget-packages
+          path: ./nuget
+
+
+      - name: NuGet push
+        run: |
+          dotnet nuget push ./nuget/**/*.nupkg \
+            -k ${{ secrets.GITHUB_TOKEN }} \
+            -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --skip-duplicate
   # create-release:
   #   runs-on: ubuntu-latest
   #   if: ${{ success() }}
