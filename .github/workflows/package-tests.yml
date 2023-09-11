@@ -47,6 +47,6 @@ jobs:
       - name: Create and build test project
         run: |
           dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
-          dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --no-restore
-          dotnet restore ./examples/netcore6/net6test.csproj
+          dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' --no-restore
+          dotnet restore -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" ./examples/netcore6/net6test.csproj
           dotnet build ./examples/netcore6/net6test.csproj --no-restore
