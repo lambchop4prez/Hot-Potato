@@ -71,7 +71,7 @@ jobs:
 
   test-packages:
     needs: [build, push-packages]
-    uses: ./.github/package-tests.yml
+    uses: ./.github/workflows/package-tests.yml
     with:
       version: ${{ needs.build.outputs.version }}
 
