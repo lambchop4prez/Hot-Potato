@@ -46,7 +46,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
 
-      - name: Setup package source
+      - name: Create and build test project
         run: |
           dotnet nuget add source \
             --username ${{ github.repository_owner }} \
@@ -54,10 +54,6 @@ jobs:
             --store-password-in-clear-text \
             --name github \
             "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
-
-
-      - name: Create and build test project
-        run: |
           dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
           dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core -v '${{ inputs.version }}' -s 'github'
           dotnet restore ./examples/netcore6/net6test.csproj
