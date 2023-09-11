@@ -39,8 +39,6 @@ jobs:
   test-net6:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.0.0
-
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v3.2.0
         with:
@@ -55,7 +53,7 @@ jobs:
             --name github \
             "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
-          dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core -v '${{ inputs.version }}' -s 'github'
+          dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' -s 'github'
           dotnet restore ./examples/netcore6/net6test.csproj
           dotnet build ./examples/netcore6/net6test.csproj --no-restore
 
