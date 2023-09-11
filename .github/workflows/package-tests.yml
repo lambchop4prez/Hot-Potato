@@ -54,5 +54,5 @@ jobs:
             "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
           dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' --no-restore
-          dotnet restore -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" ./examples/netcore6/net6test.csproj
+          dotnet restore -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" -s "https://api.nuget.org/v3/index/json" ./examples/netcore6/net6test.csproj
           dotnet build ./examples/netcore6/net6test.csproj --no-restore
