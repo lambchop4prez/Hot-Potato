@@ -25,10 +25,10 @@ jobs:
       - name: Create tag
         uses: actions/github-script@v6
         env:
-          VERSION: ${{ needs.build.outputs.version }}
+          VERSION: '${{ needs.build.outputs.version }}'
         with:
           script: |
-            const {VERSION} = process.env
+            const { VERSION } = process.env
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
