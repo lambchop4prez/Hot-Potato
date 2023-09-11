@@ -7,7 +7,7 @@ on:
     outputs:
       version:
         description: Derived Hot Potato version
-        value: ${ job.build.steps.gitversion.outputs.nuGetVersionV2 }
+        value: ${ jobs.build.steps.gitversion.outputs.nuGetVersionV2 }
 
 jobs:
   build:
