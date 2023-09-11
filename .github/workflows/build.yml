@@ -42,7 +42,7 @@ jobs:
 
     - name: Build
       run: |
-        dotnet build --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
+        dotnet build --configuration Release -p:Version=${{ steps.gitversion.outputs.majorMinorPatch }}
 
     - name: Test
       env:
@@ -52,7 +52,7 @@ jobs:
     - name: Package
       if: ${{ success() }}
       run: |
-        dotnet pack -p:PackageVersion=${{ env. GitVersion_NuGetVersionV2 }} -c Release --no-build --no-restore --output $GITHUB_WORKSPACE/nuget
+        dotnet pack -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -c Release --no-build --no-restore --output $GITHUB_WORKSPACE/nuget
 
     - name: Archive nuget package artifacts
       uses: actions/upload-artifact@v3.1.3
