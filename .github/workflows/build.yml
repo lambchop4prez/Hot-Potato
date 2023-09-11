@@ -52,13 +52,13 @@ jobs:
     - name: Package
       if: ${{ success() }}
       run: |
-        dotnet pack -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -c Release --no-build --no-restore --output $GITHUB_WORKSPACE/nuget
+        dotnet pack -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -c Release --no-build --no-restore --output ./nuget
 
     - name: Archive nuget package artifacts
       uses: actions/upload-artifact@v3.1.3
       with:
         name: nuget-packages
-        path: $GITHUB_WORKSPACE/nuget/**/*.nupkg
+        path: ./nuget/**/*.nupkg
 
     - name: Archive code coverage results
       uses: actions/upload-artifact@v3.1.3
