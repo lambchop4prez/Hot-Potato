@@ -24,12 +24,15 @@ jobs:
       #   uses: actions/checkout@v4
       - name: Create tag
         uses: actions/github-script@v6
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
         with:
           script: |
+            const {VERSION} = process.env
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{ needs.build.outputs.version }}',
+              ref: 'refs/tags/${VERSION}',
               sha: context.sha
             });
 
