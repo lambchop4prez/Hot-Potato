@@ -46,7 +46,13 @@ jobs:
 
       - name: Create and build test project
         run: |
+          dotnet nuget add source \
+            --username ${{ github.repository_owner }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
           dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' --no-restore
-          dotnet restore -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" -k ${{ secrets.GITHUB_TOKEN }} ./examples/netcore6/net6test.csproj
+          dotnet restore -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" ./examples/netcore6/net6test.csproj
           dotnet build ./examples/netcore6/net6test.csproj --no-restore
