@@ -10,13 +10,13 @@ jobs:
   push-package:
     runs-on: ubuntu-latest
     steps:
-      - name: Pull artifacts from tag
-        uses: actions/download-artifact@v3.0.2
+      - name: Pull artifacts from release
+        run: gh release download ${{ github.event.release.tag_name }} --dir ./artifacts
 
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: 6.0.x
 
-      - name: Publish
-        run: dotnet nuget push $GITHUB_WORKSPACE/nuget/**/*.nupkg -k '${{ secrets.NUGET_PUSH }}' -s https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: Publish nuget packages
+        run: dotnet nuget push ./artifacts/**/*.nupkg -k '${{ secrets.NUGET_PUSH }}' -s https://api.nuget.org/v3/index.json --skip-duplicate
