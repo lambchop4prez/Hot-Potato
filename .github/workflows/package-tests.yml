@@ -1,0 +1,62 @@
+---
+###
+# Runs a set of tests on the nuget packages to ensure functionality
+###
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        descriptions: "Version tag of the package to test."
+        required: true
+        type: string
+
+jobs:
+  # TODO: Need to get a Windows system to create a netframework example solution.
+  # test-netframework:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v4.0.0
+
+  #     - name: Setup MSBuild
+  #       uses: microsoft/setup-msbuild@v1.3.1
+
+  #     - name: Setup NuGet
+  #       uses: NuGet/setup-nuget@v1.2.0
+
+  #     - name: Restore
+  #       run: nuget restore ./examples/netframework/Example.sln
+
+  #     - name: Build
+  #       run: msbuild.exe ./examples/netframework/Example.sln /p:platform="Any CPU" /p:configuration="Release"
+
+  test-net6:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.0.0
+
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Setup package source
+        run: |
+          dotnet nuget add source \
+            --username ${{ github.repository_owner }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+
+      - name: Build
+        run: |
+          dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore
+          dotnet add ./examples/netcore/net6test package HotPotato.Core -v ${{ inputs.version }} -s 'github'
+          dotnet restore ./examples
+

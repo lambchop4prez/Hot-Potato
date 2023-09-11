@@ -13,15 +13,20 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
+  # generate-sbom:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Run syft
+  #       run: syft .
+
   create-tag:
     runs-on: ubuntu-latest
     needs: build
     permissions:
       contents: write
     steps:
-
-      # - name: Checkout
-      #   uses: actions/checkout@v4
       - name: Create tag
         uses: actions/github-script@v6
         env:
@@ -36,7 +41,7 @@ jobs:
               sha: context.sha
             });
 
-  push-package:
+  push-packages:
     runs-on: ubuntu-latest
     needs: build
     permissions:
@@ -51,7 +56,7 @@ jobs:
       - name: Setup Nuget Source
         run: |
           dotnet nuget add source \
-            --username USERNAME \
+            --username ${{ github.repository_owner }} \
             --password ${{ secrets.GITHUB_TOKEN }} \
             --store-password-in-clear-text \
             --name github \
@@ -63,3 +68,22 @@ jobs:
             -k ${{ secrets.GITHUB_TOKEN }} \
             -s  "github" \
             --skip-duplicate
+
+  test-packages:
+    needs: [build, push-packages]
+    uses: ./.github/package-tests.yml
+    with:
+      version: ${{ needs.build.outputs.version }}
+
+  create-release:
+    needs: [build, test-packages]
+    runs-on: ubuntu-latest
+    if: github.ref == 'main'
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: nuget-packages
+          path: ./artifacts
+      - name: Create Release
+        run: gh release create ${{ jobs.build.steps.gitversion.outputs.nuGetVersionV2 }} ./artifacts/*

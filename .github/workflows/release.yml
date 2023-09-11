@@ -3,6 +3,8 @@ name: Release Hot Potato
 
 on:
   release:
+    types:
+      - "released"
 
 jobs:
   push-package:
