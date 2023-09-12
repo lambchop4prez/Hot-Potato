@@ -13,13 +13,13 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  # generate-sbom:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     - name: Run syft
-  #       run: syft .
+  generate-sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate sbom
+        uses: anchore/sbom-action
 
   create-tag:
     runs-on: ubuntu-latest
