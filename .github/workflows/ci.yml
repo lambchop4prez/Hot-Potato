@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Generate sbom
-        uses: anchore/sbom-action
+        uses: anchore/sbom-action@v0.14.3
 
   create-tag:
     runs-on: ubuntu-latest
