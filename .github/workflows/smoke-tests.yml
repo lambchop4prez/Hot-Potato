@@ -2,7 +2,7 @@
 ###
 # Runs a set of tests on the nuget packages to ensure functionality
 ###
-name: Package Tests
+name: Smoke Tests
 
 on:
   workflow_call:

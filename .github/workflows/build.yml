@@ -49,7 +49,7 @@ jobs:
     - name: Test
       env:
         SpecToken: ${{ secrets.GITHUB_TOKEN }}
-      run: dotnet test -c Release --no-restore --no-build
+      run: dotnet test -c Release -s ./test/ci.runsettings --no-restore --no-build
 
     - name: Package
       if: ${{ success() }}

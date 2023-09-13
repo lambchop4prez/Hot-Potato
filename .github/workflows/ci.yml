@@ -10,9 +10,17 @@ on:
       - main
 
 jobs:
+  ###
+  # Build Hot Potato
+  # This will build test and package Hot Potato, if successful an artifact will be created to be used by downstream jobs.
+  ###
   build:
     uses: ./.github/workflows/build.yml
 
+  ###
+  # Generate Software Bill of Materials
+  # Creates a machine-readable list of all project dependencies (and their dependencies) that can be used for further vulnerability scanning.
+  ###
   generate-sbom:
     runs-on: ubuntu-latest
     if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.commits.message, '+sbom')  }}
@@ -22,10 +30,16 @@ jobs:
       - name: Generate sbom
         uses: anchore/sbom-action@v0.14.3
 
+  ###
+  # Publish nuget packages.
+  # Only runs on main, or when `+push` is included in a commit message.
+  # Note: We can't publish packages on PRs since the max package access for forked repos is read.
+  # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+  ###
   push-packages:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.commits.message, '+push')  }}
+    if: ${{ (github.ref_name == 'main') || contains(github.event.commits.message, '+push')  }}
     permissions:
       packages: write
     steps:
@@ -54,7 +68,7 @@ jobs:
   # TODO: This mostly works, but is still failing.
   # test-packages:
   #   needs: [build, push-packages]
-  #   uses: ./.github/workflows/package-tests.yml
+  #   uses: ./.github/workflows/smoke-tests.yml
   #   with:
   #     version: ${{ needs.build.outputs.version }}
 
@@ -79,6 +93,10 @@ jobs:
               sha: context.sha
             });
 
+  ###
+  # Creates a draft release that can be used to trigger further workflows if necessary.
+  # Once the release is acceptable, an admin can publish a release and push packages to nuget.
+  ###
   create-release:
     needs: [build, create-tag]
     runs-on: ubuntu-latest
