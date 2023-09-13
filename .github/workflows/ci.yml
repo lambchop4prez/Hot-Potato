@@ -18,25 +18,6 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   ###
-  # Generate Software Bill of Materials
-  # Creates a machine-readable list of all project dependencies (and their dependencies) that can be used for further vulnerability scanning.
-  ###
-  # generate-sbom:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+sbom')  }}
-  #   steps:
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v3.0.2
-  #       with:
-  #         name: nuget-packages
-  #         path: ./nuget
-  #     - name: Generate sbom
-  #       uses: anchore/sbom-action@v0.14.3
-  #       with:
-  #         path: ./nuget
-
-  ###
   # Publish nuget packages.
   # Only runs on main, or when `+push` is included in a commit message.
   # Note: We can't publish packages on PRs since the max package access for forked repos is read.
@@ -72,7 +53,7 @@ jobs:
             --skip-duplicate
 
   # TODO: This mostly works, but is still failing.
-  # test-packages:
+  # smoke-test:
   #   needs: [build, push-packages]
   #   uses: ./.github/workflows/smoke-tests.yml
   #   with:
