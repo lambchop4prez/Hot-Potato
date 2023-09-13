@@ -32,6 +32,7 @@ jobs:
           dotnet-version: 6.0.x
       - name: Install and run tool
         run: |
+          dotnet new tool-manifest
           dotnet tool install hotpotato.aspnetcore.host --version ${{ inputs.version }} --add-source ./nuget
           dotnet HotPotato > ./test/results/cli-stdout.log &
           sleep 1
@@ -63,6 +64,12 @@ jobs:
   test-net6:
     runs-on: ubuntu-latest
     steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: nuget-packages
+          path: ./nuget
+
       - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v3.2.0
         with:
@@ -70,13 +77,7 @@ jobs:
 
       - name: Create and build test project
         run: |
-          dotnet nuget add source \
-            --username ${{ github.repository_owner }} \
-            --password ${{ secrets.GITHUB_TOKEN }} \
-            --store-password-in-clear-text \
-            --name github \
-            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
           dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
           dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' --no-restore
-          dotnet restore -s "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" -s "https://api.nuget.org/v3/index/json" ./examples/netcore6/net6test.csproj
+          dotnet restore -s "./nuget" ./examples/netcore6/net6test.csproj
           dotnet build ./examples/netcore6/net6test.csproj --no-restore
