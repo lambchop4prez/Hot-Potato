@@ -21,20 +21,20 @@ jobs:
   # Generate Software Bill of Materials
   # Creates a machine-readable list of all project dependencies (and their dependencies) that can be used for further vulnerability scanning.
   ###
-  generate-sbom:
-    runs-on: ubuntu-latest
-    needs: build
-    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+sbom')  }}
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3.0.2
-        with:
-          name: nuget-packages
-          path: ./nuget
-      - name: Generate sbom
-        uses: anchore/sbom-action@v0.14.3
-        with:
-          path: ./nuget
+  # generate-sbom:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+sbom')  }}
+  #   steps:
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v3.0.2
+  #       with:
+  #         name: nuget-packages
+  #         path: ./nuget
+  #     - name: Generate sbom
+  #       uses: anchore/sbom-action@v0.14.3
+  #       with:
+  #         path: ./nuget
 
   ###
   # Publish nuget packages.
@@ -45,7 +45,7 @@ jobs:
   push-packages:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ (github.ref_name == 'main') || contains(github.event.commits.message, '+push')  }}
+    if: ${{ (github.ref_name == 'main') || contains(github.event.head_commit.message, '+push')  }}
     permissions:
       packages: write
     steps:

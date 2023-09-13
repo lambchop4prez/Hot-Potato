@@ -56,6 +56,11 @@ jobs:
       run: |
         dotnet pack -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -c Release --no-build --no-restore --output ./nuget
 
+    - name: Generate sbom
+      uses: anchore/sbom-action@v0.14.3
+      with:
+        path: ./
+
     - name: Archive nuget package artifacts
       uses: actions/upload-artifact@v3.1.3
       with:
