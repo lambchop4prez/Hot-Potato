@@ -33,6 +33,8 @@ jobs:
           path: ./nuget
       - name: Generate sbom
         uses: anchore/sbom-action@v0.14.3
+        with:
+          path: ./nuget
 
   ###
   # Publish nuget packages.
