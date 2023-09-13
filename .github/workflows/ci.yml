@@ -23,7 +23,8 @@ jobs:
   ###
   generate-sbom:
     runs-on: ubuntu-latest
-    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.commits.message, '+sbom')  }}
+    needs: build
+    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+sbom')  }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3.0.2
