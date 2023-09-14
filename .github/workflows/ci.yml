@@ -32,6 +32,7 @@ jobs:
         with:
           name: ${{ github.event.repository.name }}-sbom
           path: "${{ github.workspace }}"
+      - run: ls -R ${{ github.workspace }}
       - uses: anchore/scan-action@v3
         with:
           sbom: "${{github.workspace}}/${{ github.event.repository.name }}-sbom/${{ github.event.repository.name }}-sbom.spdx.json"
