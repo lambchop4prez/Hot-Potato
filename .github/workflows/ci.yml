@@ -34,7 +34,7 @@ jobs:
           path: "${{ github.workspace }}"
       - uses: anchore/scan-action@v3
         with:
-          sbom: "${{github.workspace}}/${{ github.event.repository.name }}-sbom.spdx.json"
+          sbom: "${{github.workspace}}/${{ github.event.repository.name }}-sbom/${{ github.event.repository.name }}-sbom.spdx.json"
   ###
   # Publish nuget packages.
   # Only runs on main, or when `+push` is included in a commit message.
