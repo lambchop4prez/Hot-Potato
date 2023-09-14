@@ -3,4 +3,18 @@
   <RunConfiguration>
 	<ResultsDirectory>./results</ResultsDirectory>
   </RunConfiguration>
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName="console" enabled="True">
+        <Configuration>
+            <Verbosity>quiet</Verbosity>
+        </Configuration>
+      </Logger>
+      <Logger friendlyName="trx" enabled="True" />
+      <Logger friendlyName="html" enabled="True" />
+    </Loggers>
+  </LoggerRunSettings>
+  <xunit>
+	<ParallelizeAssembly>true</ParallelizeAssembly>
+  </xunit>
 </RunSettings>

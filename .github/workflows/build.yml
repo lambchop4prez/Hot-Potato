@@ -32,11 +32,6 @@ jobs:
         useConfigFile: true
         configFilePath: './GitVersion.yml'
 
-    - name: Display GitVersion outputs
-      run: |
-        echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-        echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
-
     - name: Setup .NET 6.0
       uses: actions/setup-dotnet@v3.2.0
       with:
