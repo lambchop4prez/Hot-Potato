@@ -55,6 +55,8 @@ jobs:
       uses: anchore/sbom-action@v0.14.3
       with:
         path: ./
+        format: spdx-json
+        output-file: "${{ github.event.repository.name }}-sbom.spdx.json"
 
     - name: Archive nuget package artifacts
       uses: actions/upload-artifact@v3.1.3
