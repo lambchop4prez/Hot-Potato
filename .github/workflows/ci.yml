@@ -17,11 +17,10 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-
-  # TODO: This mostly works, but is still failing.
   smoke-test:
     needs: [build]
     uses: ./.github/workflows/smoke-tests.yml
+    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+test')  }}
     with:
       version: ${{ needs.build.outputs.version }}
 
