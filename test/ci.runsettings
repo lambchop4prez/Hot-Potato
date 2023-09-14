@@ -14,6 +14,16 @@
       <Logger friendlyName="html" enabled="True" />
     </Loggers>
   </LoggerRunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage">
+        <Configuration>
+          <Format>json,cobertura,opencover</Format>
+		  <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
   <xunit>
 	<ParallelizeAssembly>true</ParallelizeAssembly>
   </xunit>
