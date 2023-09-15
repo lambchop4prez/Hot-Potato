@@ -1,8 +1,8 @@
 
 namespace HotPotato.OpenApi.Validators
 {
-	public interface IValidationResult
-	{
-		bool Valid { get; }
-	}
+    public interface IValidationResult
+    {
+        bool Valid { get; }
+    }
 }

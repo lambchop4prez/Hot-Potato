@@ -1,10 +1,10 @@
-﻿using HotPotato.OpenApi.Validators;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using HotPotato.OpenApi.Validators;
 
 namespace HotPotato.OpenApi.Filters
 {
-	public interface IValidationErrorFilter
-	{
-		void Filter(IList<ValidationError> validationErrors);
-	}
+    public interface IValidationErrorFilter
+    {
+        void Filter(IList<ValidationError> validationErrors);
+    }
 }

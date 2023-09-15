@@ -1,30 +1,30 @@
 
-using HotPotato.OpenApi.Models;
 using HotPotato.Core.Http;
+using HotPotato.OpenApi.Models;
 using NJsonSchema;
 using NSwag;
 
 namespace HotPotato.OpenApi.Validators
 {
-	internal class XmlBodyValidator : BodyValidator
-	{
-		public XmlBodyValidator(string bodyString)
-		{
-			BodyString = bodyString;
-		}
+    internal class XmlBodyValidator : BodyValidator
+    {
+        public XmlBodyValidator(string bodyString)
+        {
+            BodyString = bodyString;
+        }
 
-		public override IValidationResult Validate(JsonSchema schema)
-		{
-			var xmlErrList = schema.ValidateXml(BodyString);
-			if (xmlErrList.Count == 0)
-			{
-				return new ValidResult();
-			}
-			else
-			{
-				ValidationError[] xmlErrorArr = xmlErrList.ToArray();
-				return new InvalidResult(Reason.InvalidBody, xmlErrorArr);
-			}
-		}
-	}
+        public override IValidationResult Validate(JsonSchema schema)
+        {
+            var xmlErrList = schema.ValidateXml(BodyString);
+            if (xmlErrList.Count == 0)
+            {
+                return new ValidResult();
+            }
+            else
+            {
+                ValidationError[] xmlErrorArr = xmlErrList.ToArray();
+                return new InvalidResult(Reason.InvalidBody, xmlErrorArr);
+            }
+        }
+    }
 }

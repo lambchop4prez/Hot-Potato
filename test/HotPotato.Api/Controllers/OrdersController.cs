@@ -1,326 +1,326 @@
+using System;
+using System.Linq;
 using HotPotato.Test.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using System;
-using System.Linq;
 
 namespace HotPotato.Test.Api.Controllers
 {
-	public class OrdersController : Controller
-	{
-		#region HAPPY PATHS
+    public class OrdersController : Controller
+    {
+        #region HAPPY PATHS
 
-		[HttpGet("/")]
-		public IActionResult getLandingPage()
-		{
-			string repo = @"https://github.com/HylandSoftware/Hot-Potato";
+        [HttpGet("/")]
+        public IActionResult getLandingPage()
+        {
+            string repo = @"https://github.com/HylandSoftware/Hot-Potato";
 
-			return Ok(repo);
-		}
+            return Ok(repo);
+        }
 
-		[HttpGet("/order")]
-		public IActionResult GetOrders()
-		{
-			return Ok(OrderDataStore.Current.Orders);
-		}
+        [HttpGet("/order")]
+        public IActionResult GetOrders()
+        {
+            return Ok(OrderDataStore.Current.Orders);
+        }
 
-		[HttpPost("/order")]
-		public IActionResult PostOrder([FromBody] Order order)
-		{
-			ProblemDetails problemDetails = new ProblemDetails()
-			{
-				Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-				Status = 400,
-				Title = "400 Bad Request",
-				Detail = "Order needs an ID, Price, and Items[]",
-				Instance = GetInstance(HttpContext.Request)
-			};
+        [HttpPost("/order")]
+        public IActionResult PostOrder([FromBody] Order order)
+        {
+            ProblemDetails problemDetails = new ProblemDetails()
+            {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                Status = 400,
+                Title = "400 Bad Request",
+                Detail = "Order needs an ID, Price, and Items[]",
+                Instance = GetInstance(HttpContext.Request)
+            };
 
-			if (OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == order.Id) != null)
-			{
-				problemDetails.Detail = $"Order with ID: {order.Id} already exists";
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == order.Id) != null)
+            {
+                problemDetails.Detail = $"Order with ID: {order.Id} already exists";
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-			if (order.Id == 0 || order.Price == 0 || order.Items == null)
-			{
-                
+            if (order.Id == 0 || order.Price == 0 || order.Items == null)
+            {
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
 
-			var uri = $"https://localhost:44366/order/{order.Id}";
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-			return Created(uri, order);
-		}
+            var uri = $"https://localhost:44366/order/{order.Id}";
 
-		[HttpGet("/order/{id}")]
-		public IActionResult GetOrderWithId(int id)
-		{
-			//Invalid Body condition -- Missing properties
-			if (id == 555)
-			{
-				var t = new { Price = 20.50 };
+            return Created(uri, order);
+        }
 
-				return Ok(t);
-			}
+        [HttpGet("/order/{id}")]
+        public IActionResult GetOrderWithId(int id)
+        {
+            //Invalid Body condition -- Missing properties
+            if (id == 555)
+            {
+                var t = new { Price = 20.50 };
 
-			//Missing Body -- return Empty Body
-			if(id == 777)
-			{
-				return Ok();
-			}
+                return Ok(t);
+            }
 
-			//MissingContent -- return content-type not listed
-			if(id == 888)
-			{
-				return Ok("Wrong Content-Type");
-			}
+            //Missing Body -- return Empty Body
+            if (id == 777)
+            {
+                return Ok();
+            }
 
-			var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
+            //MissingContent -- return content-type not listed
+            if (id == 888)
+            {
+                return Ok("Wrong Content-Type");
+            }
 
-			if(order == null)
-			{
-				ProblemDetails problemDetails = new ProblemDetails()
-				{
-					Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-					Status = 404,
-					Title = "404 Not Found",
-					Detail = $"Order with ID: {id} was not found",
-					Instance = GetInstance(HttpContext.Request)
-				};
+            var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (order == null)
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Status = 404,
+                    Title = "404 Not Found",
+                    Detail = $"Order with ID: {id} was not found",
+                    Instance = GetInstance(HttpContext.Request)
+                };
 
-			return Ok(order);
-		}
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-		[HttpPut("/order/{id}")]
-		public IActionResult PutOrderWithId([FromBody] Order oldOrder, int id)
-		{
-			var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
+            return Ok(order);
+        }
 
-			if (order == null)
-			{
-				ProblemDetails problemDetails = new ProblemDetails()
-				{
-					Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-					Status = 404,
-					Title = "404 Not Found",
-					Detail = $"Order with ID: {id} was not found",
-					Instance = GetInstance(HttpContext.Request)
-				};
+        [HttpPut("/order/{id}")]
+        public IActionResult PutOrderWithId([FromBody] Order oldOrder, int id)
+        {
+            var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (order == null)
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Status = 404,
+                    Title = "404 Not Found",
+                    Detail = $"Order with ID: {id} was not found",
+                    Instance = GetInstance(HttpContext.Request)
+                };
 
-			OrderDataStore.Current.Orders[OrderDataStore.Current.Orders.FindIndex(r => r.Id == id)] = oldOrder;
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-			return NoContent();
-		}
+            OrderDataStore.Current.Orders[OrderDataStore.Current.Orders.FindIndex(r => r.Id == id)] = oldOrder;
 
-		[HttpOptions("/order/{id}")]
-		public IActionResult OptionsForPath()
-		{
-			Response.Headers.Add("Allow", "Allow");
-			return Ok("GET, PUT");
-		}
+            return NoContent();
+        }
 
-		[HttpGet("/order/{id}/price")]
-		public IActionResult GetPriceWithId(int id)
-		{
+        [HttpOptions("/order/{id}")]
+        public IActionResult OptionsForPath()
+        {
+            Response.Headers.Add("Allow", "Allow");
+            return Ok("GET, PUT");
+        }
 
-			var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
+        [HttpGet("/order/{id}/price")]
+        public IActionResult GetPriceWithId(int id)
+        {
 
-			if (order == null)
-			{
-				ProblemDetails problemDetails = new ProblemDetails()
-				{
-					Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-					Status = 404,
-					Title = "404 Not Found",
-					Detail = $"Order with ID: {id} was not found",
-					Instance = GetInstance(HttpContext.Request)
-				};
+            var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (order == null)
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Status = 404,
+                    Title = "404 Not Found",
+                    Detail = $"Order with ID: {id} was not found",
+                    Instance = GetInstance(HttpContext.Request)
+                };
 
-			var price = String.Format("{0:.00}", order.Price);
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-			return Ok(price);
-		}
+            var price = String.Format("{0:.00}", order.Price);
 
-		[HttpGet("/order/{id}/items")]
-		public IActionResult GetItemsForOrderId(int id)
-		{
-			var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
+            return Ok(price);
+        }
 
-			if (order == null)
-			{
-				ProblemDetails problemDetails = new ProblemDetails()
-				{
-					Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-					Status = 404,
-					Title = "404 Not Found",
-					Detail = $"Order with ID: {id} was not found",
-					Instance = GetInstance(HttpContext.Request)
-				};
+        [HttpGet("/order/{id}/items")]
+        public IActionResult GetItemsForOrderId(int id)
+        {
+            var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (order == null)
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Status = 404,
+                    Title = "404 Not Found",
+                    Detail = $"Order with ID: {id} was not found",
+                    Instance = GetInstance(HttpContext.Request)
+                };
 
-			return Ok(order.Items);
-		}
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-		[HttpGet("/order/{id}/items/{itemId}")]
-		public IActionResult GetItemWithIdFromOrderWithId(int id, int itemId)
-		{
-			var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
-			var item = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id).Items.FirstOrDefault(r => r.ItemId == itemId);
+            return Ok(order.Items);
+        }
 
-			if (order == null || item == null)
-			{
-				ProblemDetails problemDetails = new ProblemDetails()
-				{
-					Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-					Status = 404,
-					Title = "404 Not Found",
-					Detail = $"Order with ID: {id} was not found or Item with ID: {itemId} was not found",
-					Instance = GetInstance(HttpContext.Request)
-				};
+        [HttpGet("/order/{id}/items/{itemId}")]
+        public IActionResult GetItemWithIdFromOrderWithId(int id, int itemId)
+        {
+            var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
+            var item = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id).Items.FirstOrDefault(r => r.ItemId == itemId);
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (order == null || item == null)
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Status = 404,
+                    Title = "404 Not Found",
+                    Detail = $"Order with ID: {id} was not found or Item with ID: {itemId} was not found",
+                    Instance = GetInstance(HttpContext.Request)
+                };
 
-			var res = new ContentResult()
-			{
-				ContentType = "application/pdf",
-				StatusCode = 200,
-				Content = item.ToString()
-			};
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-			return res;
-		}
+            var res = new ContentResult()
+            {
+                ContentType = "application/pdf",
+                StatusCode = 200,
+                Content = item.ToString()
+            };
 
-		[HttpDelete("/order/{id}/items/{itemId}")]
-		public IActionResult DeleteItemWithItemIdInOrder(int id, int itemId)
-		{
+            return res;
+        }
 
-			//InValidHeaders -- strings not formatted correctly
-			if (id == 666 && itemId == 666)
-			{
-				Response.Headers.Add("X-header", "&*(&^&%%##@");
-				return NoContent();
-			}
+        [HttpDelete("/order/{id}/items/{itemId}")]
+        public IActionResult DeleteItemWithItemIdInOrder(int id, int itemId)
+        {
 
-			//MissingHeaders -- Omit Header defined in spec
-			if(id == 777 && itemId == 777)
-			{
-				Response.Headers.Clear();
-				return NoContent();    
-			}
+            //InValidHeaders -- strings not formatted correctly
+            if (id == 666 && itemId == 666)
+            {
+                Response.Headers.Add("X-header", "&*(&^&%%##@");
+                return NoContent();
+            }
 
-			var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
-			var item = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id).Items.FirstOrDefault(r => r.ItemId == itemId);
+            //MissingHeaders -- Omit Header defined in spec
+            if (id == 777 && itemId == 777)
+            {
+                Response.Headers.Clear();
+                return NoContent();
+            }
 
-			if (order == null || item == null)
-			{
-				ProblemDetails problemDetails = new ProblemDetails()
-				{
-					Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-					Status = 404,
-					Title = "404 Not Found",
-					Detail = $"Order with ID: {id} was not found or Item with ID: {itemId} was not found",
-					Instance = GetInstance(HttpContext.Request)
-				};
+            var order = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id);
+            var item = OrderDataStore.Current.Orders.FirstOrDefault(r => r.Id == id).Items.FirstOrDefault(r => r.ItemId == itemId);
 
-				return new ObjectResult(problemDetails)
-				{
-					StatusCode = problemDetails.Status,
-					ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
-				};
-			}
+            if (order == null || item == null)
+            {
+                ProblemDetails problemDetails = new ProblemDetails()
+                {
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                    Status = 404,
+                    Title = "404 Not Found",
+                    Detail = $"Order with ID: {id} was not found or Item with ID: {itemId} was not found",
+                    Instance = GetInstance(HttpContext.Request)
+                };
 
-			var res = new NoContentResult();
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status,
+                    ContentTypes = new Microsoft.AspNetCore.Mvc.Formatters.MediaTypeCollection() { new MediaTypeHeaderValue("application/problem+json") }
+                };
+            }
 
-			Response.Headers.Add("X-header", "SEVBREVS");
+            var res = new NoContentResult();
 
-			return res;
-		}
+            Response.Headers.Add("X-header", "SEVBREVS");
 
-		#endregion
+            return res;
+        }
 
-		#region NOT IN SPEC PATHS
+        #endregion
 
-		/// <summary>
-		/// PATH NOT IN SPEC! HotPotato should catch this call and return an error.
-		/// </summary>
-		/// <returns></returns>
-		[HttpGet("/missingpath")]
-		public IActionResult GetMissingPath()
-		{
-			var path = "This PATH is missing in the spec!";
-			return Ok(path);
-		}
+        #region NOT IN SPEC PATHS
 
-		/// <summary>
-		/// METHOD NOT IN SPEC! HotPotato should catch this call and return an error.
-		/// </summary>
-		/// <returns></returns>
-		[HttpGet("/missingmethod")]
-		public IActionResult GetMissingMethod()
-		{
-			var method = "This METHOD is missing in the spec!";
-			return Ok(method);
-		}
+        /// <summary>
+        /// PATH NOT IN SPEC! HotPotato should catch this call and return an error.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/missingpath")]
+        public IActionResult GetMissingPath()
+        {
+            var path = "This PATH is missing in the spec!";
+            return Ok(path);
+        }
 
-		/// <summary>
-		/// STATUS CODE NOT IN SPEC! HotPotato should catch this call and return an error.
-		/// </summary>
-		/// <returns></returns>
-		[HttpGet("/missingcode")]
-		public IActionResult GetMissingStatusCode()
-		{
-			var code = "This STATUS CODE is missing in the spec!";
-			return Ok(code);
-		}
+        /// <summary>
+        /// METHOD NOT IN SPEC! HotPotato should catch this call and return an error.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/missingmethod")]
+        public IActionResult GetMissingMethod()
+        {
+            var method = "This METHOD is missing in the spec!";
+            return Ok(method);
+        }
 
-		#endregion
+        /// <summary>
+        /// STATUS CODE NOT IN SPEC! HotPotato should catch this call and return an error.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/missingcode")]
+        public IActionResult GetMissingStatusCode()
+        {
+            var code = "This STATUS CODE is missing in the spec!";
+            return Ok(code);
+        }
 
-		private static string GetInstance(HttpRequest request)
-		{
-			return $"{request.Scheme}://{request.Host.ToUriComponent()}{request.Path.Value}";
-		}
-	}
+        #endregion
+
+        private static string GetInstance(HttpRequest request)
+        {
+            return $"{request.Scheme}://{request.Host.ToUriComponent()}{request.Path.Value}";
+        }
+    }
 }

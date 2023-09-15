@@ -4,63 +4,63 @@ using System.Collections.Generic;
 
 namespace HotPotato.Core.Http
 {
-	public class HttpHeaders : IEnumerable<KeyValuePair<string, List<string>>>
-	{
-		private readonly Dictionary<string, List<string>> data;
+    public class HttpHeaders : IEnumerable<KeyValuePair<string, List<string>>>
+    {
+        private readonly Dictionary<string, List<string>> data;
 
-		public HttpHeaders()
-		{
-			StringComparer ignoreCase = StringComparer.OrdinalIgnoreCase;
-			data = new Dictionary<string, List<string>>(ignoreCase);
-		}
+        public HttpHeaders()
+        {
+            StringComparer ignoreCase = StringComparer.OrdinalIgnoreCase;
+            data = new Dictionary<string, List<string>>(ignoreCase);
+        }
 
-		public int Count
-		{
-			get
-			{
-				return data.Count;
-			}
-		}
+        public int Count
+        {
+            get
+            {
+                return data.Count;
+            }
+        }
 
-		public void Add(string key, string value)
-		{
-			if (!this.data.ContainsKey(key)) this.data[key] = new List<string>();
-            
-			this.data[key].Add(value);
-		}
-        
-		public void Add(string key, IEnumerable<string> value)
-		{
-			foreach (string item in value)
-			{
-				Add(key, item);
-			}
-		}
+        public void Add(string key, string value)
+        {
+            if (!this.data.ContainsKey(key)) this.data[key] = new List<string>();
 
-		public bool ContainsKey(string key)
-		{
-			return this.data.ContainsKey(key);
-		}
+            this.data[key].Add(value);
+        }
 
-		#region Indexer
+        public void Add(string key, IEnumerable<string> value)
+        {
+            foreach (string item in value)
+            {
+                Add(key, item);
+            }
+        }
 
-		public List<string> this[string key]
-		{
-			get { return this.data[key]; }
-		}
+        public bool ContainsKey(string key)
+        {
+            return this.data.ContainsKey(key);
+        }
 
-		#endregion
+        #region Indexer
 
-		#region IEnumerable Implementation
-		public IEnumerator<KeyValuePair<string, List<string>>> GetEnumerator()
-		{
-			return ((IEnumerable<KeyValuePair<string, List<string>>>)data).GetEnumerator();
-		}
+        public List<string> this[string key]
+        {
+            get { return this.data[key]; }
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return ((IEnumerable<KeyValuePair<string, List<string>>>)data).GetEnumerator();
-		} 
-		#endregion
-	}
+        #endregion
+
+        #region IEnumerable Implementation
+        public IEnumerator<KeyValuePair<string, List<string>>> GetEnumerator()
+        {
+            return ((IEnumerable<KeyValuePair<string, List<string>>>)data).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<KeyValuePair<string, List<string>>>)data).GetEnumerator();
+        }
+        #endregion
+    }
 }

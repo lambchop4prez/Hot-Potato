@@ -1,8 +1,8 @@
 
 namespace HotPotato.OpenApi.Validators
 {
-	public interface IValidationStrategy
-	{
-		void Validate();
-	}
+    public interface IValidationStrategy
+    {
+        void Validate();
+    }
 }

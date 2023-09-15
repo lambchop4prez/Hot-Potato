@@ -4,22 +4,22 @@ using System.Runtime.Serialization;
 
 namespace HotPotato.Core
 {
-	[Serializable]
-	public class SpecNotFoundException : Exception
-	{
-		public string SpecLocation { get; }
-		public HttpResponseMessage Response { get; }
+    [Serializable]
+    public class SpecNotFoundException : Exception
+    {
+        public string SpecLocation { get; }
+        public HttpResponseMessage Response { get; }
 
-		public SpecNotFoundException(string specLocation, HttpResponseMessage response)
-		{
-			SpecLocation = specLocation;
-			Response = response;
-		}
+        public SpecNotFoundException(string specLocation, HttpResponseMessage response)
+        {
+            SpecLocation = specLocation;
+            Response = response;
+        }
 
-		protected SpecNotFoundException(SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
+        protected SpecNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
 
-		}
-	}
+        }
+    }
 }
