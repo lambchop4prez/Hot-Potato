@@ -1,0 +1,73 @@
+---
+# Reusable workflow to build the Hot Potato nuget package and archive the artifacts.
+name: Build Hot Potato
+
+on:
+  workflow_call:
+    outputs:
+      version:
+        description: Derived Hot Potato version
+        value: ${{ jobs.build.outputs.version }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+
+    - name: Generate Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+        configFilePath: './GitVersion.yml'
+
+    - name: Setup .NET 6.0
+      uses: actions/setup-dotnet@v3.2.0
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Build
+      run: |
+        dotnet build --configuration Release -p:Version=${{ steps.gitversion.outputs.majorMinorPatch }}
+
+    - name: Test
+      env:
+        SpecToken: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet test -c Release -s ./test/ci.runsettings --no-restore --no-build
+
+    - name: Package
+      if: ${{ success() }}
+      run: |
+        dotnet pack -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -c Release --no-build --no-restore --output ./nuget
+
+    - name: Generate sbom
+      uses: anchore/sbom-action@v0.14.3
+      with:
+        path: ./
+        format: spdx-json
+        dependency-snapshot: ${{ github.ref_name == 'main' }} # Only update Github Dependency graph on main
+        artifact-name: "${{ github.event.repository.name }}-sbom.spdx.json"
+        output-file: "${{ github.event.repository.name }}-sbom.spdx.json"
+
+    - name: Archive nuget package artifacts
+      uses: actions/upload-artifact@v3.1.3
+      with:
+        name: nuget-packages
+        path: ./nuget/**/*.nupkg
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: test-results
+        path: ./test/results/*

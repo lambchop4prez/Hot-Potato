@@ -18,3 +18,5 @@
 
 # Local launchSettings
 **/[Pp]roperties/launchSettings.json
+
+test/results/**

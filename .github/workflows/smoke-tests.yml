@@ -1,0 +1,79 @@
+---
+###
+# Runs a set of tests on the nuget packages to ensure functionality
+###
+name: Smoke Tests
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+
+
+jobs:
+  test-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: nuget-packages
+          path: ./nuget
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v3.2.0
+        with:
+          dotnet-version: 6.0.x
+      - name: Install and run tool
+        run: |
+          dotnet new tool-manifest
+          dotnet tool install hotpotato.aspnetcore.host --version ${{ inputs.version }} --add-source ./nuget
+          dotnet HotPotato > ${{ github.workspace }}/cli-stdout.log &
+          sleep 1
+          killall -9 dotnet
+      - name: Upload results.
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: cli-smoke-test-results
+          path: ${{ github.workspace }}/*.log
+
+  # TODO: Need to get a Windows system to create a netframework example solution.
+  # test-netframework:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/checkout@v4.0.0
+
+  #     - name: Setup MSBuild
+  #       uses: microsoft/setup-msbuild@v1.3.1
+
+  #     - name: Setup NuGet
+  #       uses: NuGet/setup-nuget@v1.2.0
+
+  #     - name: Restore
+  #       run: nuget restore ./examples/netframework/Example.sln
+
+  #     - name: Build
+  #       run: msbuild.exe ./examples/netframework/Example.sln /p:platform="Any CPU" /p:configuration="Release"
+
+  # This is failing on the dotnet restore due to a nullreference
+  # test-net6:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v3.0.2
+  #       with:
+  #         name: nuget-packages
+  #         path: ${{ github.workspace }}/nuget
+
+  #     - name: Setup .NET 6.0
+  #       uses: actions/setup-dotnet@v3.2.0
+  #       with:
+  #         dotnet-version: 6.0.x
+
+  #     - name: Create and build test project
+  #       run: |
+  #         dotnet new classlib -f net6.0 -n net6test -o ./examples/netcore6
+  #         dotnet add ./examples/netcore6/net6test.csproj package HotPotato.Core --version '${{ inputs.version }}' --no-restore
+  #         dotnet restore -s "https://api.nuget.org/v3/index/json" -s "${{ github.workspace }}/nuget" ./examples/netcore6/net6test.csproj
+  #         dotnet build ./examples/netcore6/net6test.csproj --no-restore

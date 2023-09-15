@@ -1,130 +1,109 @@
-name: hot-potato-ci
+---
+name: Hot Potato CI
 
 on:
-  push
-
-env:
-  isMaster: ${{ github.ref == 'refs/heads/master' }}
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
+  ###
+  # Build Hot Potato
+  # This will build test and package Hot Potato, if successful an artifact will be created to be used by downstream jobs.
+  ###
   build:
+    uses: ./.github/workflows/build.yml
 
+  smoke-test:
+    needs: [build]
+    uses: ./.github/workflows/smoke-tests.yml
+    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+test')  }}
+    with:
+      version: ${{ needs.build.outputs.version }}
+
+  vulnerability-scan:
     runs-on: ubuntu-latest
-
+    needs: [build]
+    if: ${{ (github.ref_name == 'main') || (github.event_name == 'pull_request') || contains(github.event.head_commit.message, '+vuln')  }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        # token: ${{ secrets.EXPAND_TEAMS_PAT }}
-        # submodules: true
+      - uses: actions/download-artifact@v3.0.2
+        with:
+          name: ${{ github.event.repository.name }}-sbom.spdx.json
+          path: "${{ github.workspace }}"
+      - uses: anchore/scan-action@v3
+        with:
+          sbom: "${{github.workspace}}/${{ github.event.repository.name }}-sbom.spdx.json"
+  ###
+  # Publish nuget packages.
+  # Only runs on main, or when `+push` is included in a commit message.
+  # Note: We can't publish packages on PRs since the max package access for forked repos is read.
+  # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+  ###
+  push-packages:
+    runs-on: ubuntu-latest
+    needs: [build, smoke-test]
+    if: ${{ (github.ref_name == 'main') || contains(github.event.head_commit.message, '+push')  }}
+    permissions:
+      packages: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3.0.2
+        with:
+          name: nuget-packages
+          path: ./nuget
 
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.10.2
-      with:
-        versionSpec: '5.x'
+      - name: Setup Nuget Source
+        run: |
+          dotnet nuget add source \
+            --username ${{ github.repository_owner }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
-    - name: Generate Version
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0.10.2
-      with:
-        useConfigFile: true
-        configFilePath: './GitVersion.yml'
+      - name: NuGet push
+        run: |
+          dotnet nuget push ./nuget/**/*.nupkg \
+            -k ${{ secrets.GITHUB_TOKEN }} \
+            -s  "github" \
+            --skip-duplicate
 
-    - name: Display GitVersion outputs
-      run: |
-        echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-        echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+  create-tag:
+    runs-on: ubuntu-latest
+    needs: [build, smoke-test]
+    if: ${{ github.ref_name == 'main' }}
+    permissions:
+      contents: write
+    steps:
+      - name: Create tag
+        uses: actions/github-script@v6
+        env:
+          VERSION: '${{ needs.build.outputs.version }}'
+        with:
+          script: |
+            const { VERSION } = process.env
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${VERSION}`,
+              sha: context.sha
+            });
 
-
-    - name: Setup .NET 6.0
-      uses: actions/setup-dotnet@v3.0.3
-      with:
-        dotnet-version: 6.0.x
-
-    - name: Build
-      run: |
-        dotnet build --configuration Release -p:Version=${{ env.GitVersion_MajorMinorPatch }}
-
-    - name: Run Unit Tests
-      run: |
-        dotnet test ./test/HotPotato.Core.Test/HotPotato.Core.Test.csproj -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=$GITHUB_WORKSPACE/test/coverage/coreCoverage.xml -p:Exclude="[xunit.*]*" -l:"JUnit;LogFilePath=$GITHUB_WORKSPACE/test/results/coreResults.xml" --no-restore --no-build
-        dotnet test ./test/HotPotato.AspNetCore.Middleware.Test/HotPotato.AspNetCore.Middleware.Test.csproj -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=$GITHUB_WORKSPACE/test/coverage/middlewareCoverage.xml -p:Include="[*.Middleware]*" -l:"JUnit;LogFilePath=$GITHUB_WORKSPACE/test/results/middlewareResults.xml" --no-restore --no-build
-        dotnet test ./test/HotPotato.OpenApi.Test/HotPotato.OpenApi.Test.csproj -c Release -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=$GITHUB_WORKSPACE/test/coverage/openApiCoverage.xml -p:Include="[*.OpenApi]*" -l:"JUnit;LogFilePath=$GITHUB_WORKSPACE/test/results/openapiResults.xml" --no-restore --no-build
-
-    - name: Run Integration Tests
-      run: |
-        dotnet test ./test/HotPotato.Integration.Test/HotPotato.Integration.Test.csproj -c Release -l:"JUnit;LogFilePath=$GITHUB_WORKSPACE/test/results/integrationResults.xml" --no-restore --no-build
-
-    - name: Run Performance Tests
-      run: |
-        dotnet test ./test/HotPotato.Benchmark.Test/HotPotato.Benchmark.Test.csproj -c Release --no-restore --no-build
-
-    - name: Run E2E Tests
-      env:
-        SpecToken: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        dotnet test ./test/HotPotato.E2E.Test/HotPotato.E2E.Test.csproj -c Release -l:"JUnit;LogFilePath=$GITHUB_WORKSPACE/test/results/E2EResults.xml" --no-restore --no-build
-
-    - name: Run TestServer Tests
-      env:
-        SpecToken: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        dotnet test ./test/HotPotato.TestServer.Test/HotPotato.TestServ.Test.csproj -c Release -l:"JUnit;LogFilePath=$GITHUB_WORKSPACE/test/results/testServerResults.xml" --no-restore --no-build
-
-    - name: Start Hot Potato For Postman Tests
-      env:
-        SpecToken: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        dotnet $GITHUB_WORKSPACE/src/HotPotato.AspNetCore.Host/bin/Release/net6.0/HotPotato.AspNetCore.Host.dll &
-        dotnet $GITHUB_WORKSPACE/test/HotPotato.Api/bin/Release/net6.0/HotPotato.Test.Api.dll &
-
-    - name: Run Postman Tests
-      uses: anthonyvscode/newman-action@v1.1
-      with:
-        collection: ./test/HappyPathTests.postman_collection.json
-        reporters: cli
-
-    - name: Deploy
-      if: ${{ success() && env.isMaster == 'true' }}
-      run: |
-        dotnet pack -p:PackageVersion=${{ env. GitVersion_NuGetVersionV2 }} -c Release --no-build --no-restore --output $GITHUB_WORKSPACE/nuget
-        dotnet nuget push $GITHUB_WORKSPACE/nuget/**/*.nupkg -k ${{ secrets.NUGET_PUSH }} -s https://api.nuget.org/v3/index.json --skip-duplicate
-
-    # dotnet nuget push $GITHUB_WORKSPACE/nuget/**/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/HylandSoftware/index.json --skip-duplicate
-
-    # - name: Push Images
-    #   #if: env.isMaster == 'true'
-    #   env:
-    #     TAG_SCHEME: ghcr.io/hylandsoftware
-    #     GITHUB_USR: testautomation_github
-    #   run: |
-    #     docker login -u $GITHUB_USR -p ${{ secrets.TESTAUTOMATION_GITHUB }} $TAG_SCHEME
-
-    #     docker build --tag $TAG_SCHEME/tato/hot-potato:${{ env.GitVersion_MajorMinorPatch }} --build-arg IMAGE_VERSION=${{ env.GitVersion_MajorMinorPatch }} --build-arg CERT_INSTALL=${{ secrets.CERT_INSTALL }}
-    #     docker push $TAG_SCHEME/tato/hot-potato:${{ env.GitVersion_MajorMinorPatch }}
-    #     docker tag $TAG_SCHEME/tato/hot-potato:${{ env.GitVersion_MajorMinorPatch }} $TAG_SCHEME/tato/hot-potato:latest
-    #     docker push $TAG_SCHEME/tato/hot-potato:latest
-
-    - name: Archive code coverage results
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: code-coverage-reports
-        path: ./test/coverage/*.xml
-
-    - name: Archive test results
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: test-results
-        path: ./test/results/*.xml
-
-    - name: Create Release
-      uses: actions/create-release@v1.1.4
-      if: ${{ success() && env.isMaster == 'true' }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
-        release_name: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
-        draft: false
-        prerelease: false
+  ###
+  # Creates a draft release that can be used to trigger further workflows if necessary.
+  # Once the release is acceptable, an admin can publish a release and push packages to nuget.
+  ###
+  create-release:
+    needs: [build, create-tag]
+    runs-on: ubuntu-latest
+    if: ${{ success() && github.ref_name == 'main' }}
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v3.0.2
+        with:
+          path: ./artifacts
+      - name: Create Release
+        run: gh release create ${{ needs.build.outputs.version }} ./artifacts/* --draft --verify-tag -title "Hot Potato ${{ needs.build.outputs.version }}"
