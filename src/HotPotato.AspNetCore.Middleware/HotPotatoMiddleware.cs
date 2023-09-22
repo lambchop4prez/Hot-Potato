@@ -22,7 +22,7 @@ namespace HotPotato.AspNetCore.Middleware
 		private IProcessor Processor { get; }
 		private ILogger Log { get; }
 		private RequestDelegate Next { get; }
-		
+
 		public HotPotatoMiddleware(RequestDelegate next, IConfiguration configuration, IProcessor processor, ILogger<HotPotatoMiddleware> log)
 		{
 			Next = next ?? throw Exceptions.ArgumentNull(nameof(next));
@@ -35,11 +35,11 @@ namespace HotPotato.AspNetCore.Middleware
 
 		public async Task Invoke(HttpContext context)
 		{
-			HttpRequest request = context.Request;
+			IHotPotatoRequest request = await context.Request.ToHotPotatoRequest();
 			await Next(context);
-			HttpResponse response = context.Response;
+			IHotPotatoResponse response = await context.Response.ToHotPotatoResponse();
 
-			HttpPair httpPair = new HttpPair(request.ToHotPotatoRequest(), response.ToHotPotatoResponse());
+			HttpPair httpPair = new HttpPair(request, response);
 
 			Processor.Process(httpPair);
 		}

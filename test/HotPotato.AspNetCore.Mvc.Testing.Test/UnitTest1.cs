@@ -8,12 +8,12 @@ public class Tests
     }
 
     [Test]
-    public void Test1()
+    public async Task Test1()
     {
-        var builder = new HotPotatoWebApplicationBuilder<Test.Api.Startup>();
+        var builder = new HotPotatoWebApplicationBuilder<Test.Api.Startup>("https://raw.githubusercontent.com/lambchop4prez/Hot-Potato/main/test/RawPotatoSpec.yaml");
         var client = builder.CreateClient();
-        var response = client.GetAsync("/orders");
-        
+        var response = await client.GetAsync("/orders");
+
     }
 }
 

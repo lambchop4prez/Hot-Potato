@@ -1,5 +1,6 @@
 using HotPotato.Core.Http.Default;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
@@ -150,7 +151,7 @@ namespace HotPotato.Core.Http
 		}
 
 		/// <summary>
-		/// Allow responses to be asynchronously processed by hot potato 
+		/// Allow responses to be asynchronously processed by hot potato
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="response"></param>
@@ -220,21 +221,78 @@ namespace HotPotato.Core.Http
 			return encode.GetString(bodyContent);
 		}
 
-		public static IHotPotatoRequest ToHotPotatoRequest(this HttpRequest @this)
+		public static async Task<IHotPotatoRequest> ToHotPotatoRequest(this HttpRequest @this)
 		{
 			_ = @this ?? throw Exceptions.ArgumentNull(nameof(@this));
-			HotPotatoRequest request = (HotPotatoRequest)null;// new HotPotatoRequest(new HttpMethod(@this.Method), @this.);
 
+			HotPotatoRequest request = new HotPotatoRequest(new HttpMethod(@this.Method), new Uri(@this.GetDisplayUrl()));
+			if (@this.Headers != null && @this.Headers.Count > 0)
+			{
+				foreach (var item in @this.Headers)
+				{
+					if (!item.Key.Contains(customHeaderPrefix))
+					{
+						request.HttpHeaders.Add(item.Key, item.Value.ToArray());
+					}
+					else
+					{
+						request.CustomHeaders.Add(item.Key, item.Value.ToArray());
+					}
+				}
+			}
+			if (MethodsWithPayload.Contains(@this.Method.ToUpperInvariant()) && @this.Body != null)
+			{
+				using (MemoryStream stream = new MemoryStream())
+				{
+					await @this.Body.CopyToAsync(stream);
+					if (!string.IsNullOrEmpty(@this.ContentType))
+					{
+						//Sanitize here since System.Net.Http was throwing a format exception
+						//when sending POST/PUT requests with payloads through TestServer
+						@this.ContentType = @this.ContentType.Split(';')[0];
+					}
+					request.SetContent(stream.ToArray(), @this.ContentType);
+					// If we've read the body stream, seek back to the beginning
+					if(@this.Body.CanSeek)
+					{
+						@this.Body.Seek(0, SeekOrigin.Begin);
+					}
+				}
+			}
 
 			return request;
 		}
 
-		public static IHotPotatoResponse ToHotPotatoResponse(this HttpResponse @this)
+		public static async Task<IHotPotatoResponse> ToHotPotatoResponse(this HttpResponse @this)
 		{
 			_ = @this ?? throw Exceptions.ArgumentNull(nameof(@this));
-			HotPotatoResponse response = (HotPotatoResponse)null;//new HotPotatoResponse((HttpStatusCode)@this.StatusCode, );
 
-			return response;
+			HttpHeaders headers = new HttpHeaders();
+			if (@this.Headers != null)
+			{
+				foreach (var item in @this?.Headers)
+				{
+					headers.Add(item.Key.ToString(), item.Value.ToString());
+				}
+			}
+
+			if (@this.Body != null)
+			{
+				string contentType = @this.ContentType;
+
+				byte[] payload;
+				using(MemoryStream content = new MemoryStream())
+				{
+					await @this.Body.CopyToAsync(content);
+					payload = content.ToArray();
+				}
+
+				return new HotPotatoResponse((HttpStatusCode)@this.StatusCode, headers, payload, contentType);
+			}
+			else
+			{
+				return new HotPotatoResponse((HttpStatusCode)@this.StatusCode, headers, Array.Empty<byte>(), new MediaTypeHeaderValue("application/json"));
+			}
 		}
 	}
 }
