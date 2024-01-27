@@ -3,7 +3,7 @@
 
   on:
     push:
-      branches: [main, add-ossf-scorecard]
+      branches: [main]
 
   permissions: {}
 
